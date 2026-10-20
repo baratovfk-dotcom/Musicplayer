@@ -22,7 +22,6 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # Исправленный шаг установки Android SDK
       - name: Setup Android SDK
         run: |
           echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
@@ -30,12 +29,18 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      # ИСПРАВЛЕННЫЙ ШАГ: Теперь мы создаем файл свойств Gradle вручную
       - name: Download gradle wrapper
         run: |
           mkdir -p gradle/wrapper
           curl -L -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.2.0/gradle/wrapper/gradle-wrapper.jar
           curl -L -o gradlew https://raw.githubusercontent.com/gradle/gradle/v8.2.0/gradlew
           curl -L -o gradlew.bat https://raw.githubusercontent.com/gradle/gradle/v8.2.0/gradlew.bat
+          echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
+          echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
+          echo "distributionUrl=https\://services.gradle.org/distributions/gradle-8.2-bin.zip" >> gradle/wrapper/gradle-wrapper.properties
+          echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
+          echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
           chmod +x gradlew
 
       - name: Build Debug APK
