@@ -1,0 +1,2 @@
+-keep class com.example.musicplayer.MusicService { *; }
+-keep class com.example.musicplayer.Song { *; }
