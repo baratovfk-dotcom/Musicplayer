@@ -92,7 +92,7 @@ class MusicService : Service() {
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .build()
             )
-            setDataSource(currentSong!!.uri)
+            setDataSource(this@MusicService, Uri.parse(currentSong!!.uri))
             prepare()
             start()
             setOnCompletionListener { playNext() }
