@@ -27,12 +27,10 @@ class MusicService : Service() {
     private var playlist: List<Song> = emptyList()
     private var currentIndex = -1
 
-    // ---- Audio Focus ----
     private lateinit var audioManager: AudioManager
     private var audioFocusRequest: AudioFocusRequest? = null
     private var resumeOnFocusGain = false
 
-    // ---- MediaSession ----
     private lateinit var mediaSession: MediaSessionCompat
 
     var isPlaying = false
@@ -48,9 +46,6 @@ class MusicService : Service() {
 
     override fun onBind(intent: Intent?): IBinder = binder
 
-    // ==========================================================
-    //  Жизненный цикл
-    // ==========================================================
     override fun onCreate() {
         super.onCreate()
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -77,9 +72,6 @@ class MusicService : Service() {
         return START_STICKY
     }
 
-    // ==========================================================
-    //  Публичный API
-    // ==========================================================
     fun setPlaylist(songs: List<Song>) {
         playlist = songs
         onPlaylistChanged?.invoke(songs)
@@ -125,7 +117,6 @@ class MusicService : Service() {
         updateNotification()
         currentSong?.let { onSongChanged?.invoke(it, false) }
         onPlaybackStateChanged?.invoke(false)
-        // Не отпускаем фокус — чтобы можно было возобновить; но помечаем транзиентно
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioFocusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
             audioFocusRequest = null
@@ -154,7 +145,6 @@ class MusicService : Service() {
 
     fun playPrevious() {
         if (playlist.isEmpty()) return
-        // Если трек проигран более 3 сек — перемотка в начало
         val mp = mediaPlayer
         if (mp != null && mp.currentPosition > 3000) {
             mp.seekTo(0)
@@ -173,27 +163,20 @@ class MusicService : Service() {
         updateMediaSession()
     }
 
-    // ==========================================================
-    //  Audio Focus
-    // ==========================================================
     private val focusChangeListener = AudioManager.OnAudioFocusChangeListener { change ->
         when (change) {
             AudioManager.AUDIOFOCUS_LOSS -> {
-                // Полная потеря фокуса — пауза, не возобновляем
                 resumeOnFocusGain = false
                 pausePlayback()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                // Временная потеря (звонок) — пауза, потом возобновим
                 resumeOnFocusGain = isPlaying
                 if (isPlaying) pausePlayback()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                // Приглушить (навигация) — снижаем громкость
                 mediaPlayer?.setVolume(0.2f, 0.2f)
             }
             AudioManager.AUDIOFOCUS_GAIN -> {
-                // Фокус вернулся
                 mediaPlayer?.setVolume(1f, 1f)
                 if (resumeOnFocusGain) {
                     resumeOnFocusGain = false
@@ -203,7 +186,6 @@ class MusicService : Service() {
         }
     }
 
-    // Для API < 26
     private val legacyFocusListener = AudioManager.OnAudioFocusChangeListener { change ->
         focusChangeListener.onAudioFocusChange(change)
     }
@@ -245,9 +227,6 @@ class MusicService : Service() {
         }
     }
 
-    // ==========================================================
-    //  MediaSession
-    // ==========================================================
     private fun initMediaSession() {
         mediaSession = MediaSessionCompat(this, "MusicPlayerSession").apply {
             setCallback(object : MediaSessionCompat.Callback() {
@@ -303,9 +282,6 @@ class MusicService : Service() {
         )
     }
 
-    // ==========================================================
-    //  Notification
-    // ==========================================================
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
