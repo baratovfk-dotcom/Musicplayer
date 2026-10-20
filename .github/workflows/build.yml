@@ -29,7 +29,15 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      # ИСПРАВЛЕННЫЙ ШАГ: Теперь мы создаем файл свойств Gradle вручную
+      # ИСПРАВЛЕНИЕ: Создаем папку для ключа и задаем путь
+      - name: Fix keystore permissions
+        run: |
+          mkdir -p ~/.android
+          touch ~/.android/debug.keystore
+          chmod 777 ~/.android ~/.android/debug.keystore
+          echo "ANDROID_SDK_HOME=$HOME" >> $GITHUB_ENV
+          echo "ANDROID_USER_HOME=$HOME/.android" >> $GITHUB_ENV
+
       - name: Download gradle wrapper
         run: |
           mkdir -p gradle/wrapper
