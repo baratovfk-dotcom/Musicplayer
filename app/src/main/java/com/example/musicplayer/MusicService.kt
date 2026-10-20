@@ -18,6 +18,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat as MediaNotificationCompat
+import android.net.Uri
 
 class MusicService : Service() {
 
@@ -91,8 +92,8 @@ class MusicService : Service() {
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .build()
-            )
-            setDataSource(this@MusicService, Uri.parse(currentSong!!.uri))
+            
+                setDataSource(this@MusicService, Uri.parse(currentSong!!.uri))
             prepare()
             start()
             setOnCompletionListener { playNext() }
