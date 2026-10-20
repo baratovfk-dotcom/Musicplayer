@@ -79,32 +79,34 @@ class MusicService : Service() {
     }
 
     fun playSong(index: Int) {
-        if (index !in playlist.indices) return
-        if (!requestAudioFocus()) return
+    if (index !in playlist.indices) return
+    if (!requestAudioFocus()) return
 
-        currentIndex = index
-        currentSong = playlist[index]
+    currentIndex = index
+    currentSong = playlist[index]
 
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            
-                setDataSource(this@MusicService, Uri.parse(currentSong!!.uri))
-            prepare()
-            start()
-            setOnCompletionListener { playNext() }
-        }
-
-        isPlaying = true
-        updateMediaSession()
-        updateNotification()
-        onSongChanged?.invoke(currentSong!!, true)
-        onPlaybackStateChanged?.invoke(true)
+    // Правильное создание и настройка MediaPlayer
+    mediaPlayer?.release()
+    mediaPlayer = MediaPlayer().apply {
+        setAudioAttributes(
+            AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+        )
+        // ИСПРАВЛЕНИЕ: используем метод, принимающий Context и Uri
+        setDataSource(this@MusicService, android.net.Uri.parse(currentSong!!.uri))
+        prepare()
+        start()
+        setOnCompletionListener { playNext() }
     }
+
+    isPlaying = true
+    updateMediaSession()
+    updateNotification()
+    onSongChanged?.invoke(currentSong!!, true)
+    onPlaybackStateChanged?.invoke(true)
+}
 
     fun togglePlayPause() {
         val mp = mediaPlayer ?: return
