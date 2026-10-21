@@ -139,9 +139,22 @@ class MusicService : Service() {
         currentSong?.let { onSongChanged?.invoke(it, true) }
         onPlaybackStateChanged?.invoke(true)
     }
+    // Добавляем переменную для шаффла
+    var isShuffle = false
 
     fun playNext() {
-        if (playlist.isEmpty()) return
+    if (playlist.isEmpty()) return
+    if (isShuffle) {
+        // Случайный трек (стараемся не повторять текущий)
+        var nextIndex = currentIndex
+        if (playlist.size > 1) {
+            while (nextIndex == currentIndex) {
+                nextIndex = (0 until playlist.size).random()
+            }
+        }
+        playSong(nextIndex)
+    } else {
+        // Обычный порядок
         currentIndex = (currentIndex + 1) % playlist.size
         playSong(currentIndex)
     }
@@ -152,6 +165,8 @@ class MusicService : Service() {
         if (mp != null && mp.currentPosition > 3000) {
             mp.seekTo(0)
             updateMediaSession()
+    fun toggleShuffle() {
+        isShuffle = !isShuffle
             return
         }
         currentIndex = if (currentIndex - 1 < 0) playlist.size - 1 else currentIndex - 1
