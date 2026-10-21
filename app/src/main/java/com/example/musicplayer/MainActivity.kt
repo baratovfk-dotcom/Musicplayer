@@ -16,14 +16,12 @@ import android.provider.MediaStore
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.musicplayer.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 
 class MainActivity : AppCompatActivity() {
 
@@ -103,7 +101,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
         
-        // Долгое нажатие на кнопку Next -> Включить/выключить Shuffle
+        // Долгое нажатие на Next включает/выключает шаффл
         binding.btnNext.setOnLongClickListener {
             service?.let {
                 it.toggleShuffle()
@@ -118,7 +116,6 @@ class MainActivity : AppCompatActivity() {
         val isNowFavorite = PlaylistManager.toggleFavorite(this, song.id)
         song.isFavorite = isNowFavorite
         
-        // Обновляем список в сервисе, чтобы сердечко перекрасилось
         service?.setPlaylist(allSongs) 
         adapter.notifyItemChanged(position)
     }
@@ -215,7 +212,7 @@ class MainActivity : AppCompatActivity() {
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.DURATION,
-            MediaStore.Audio.Media.MIME_TYPE // <-- Добавили MIME-тип для фильтрации
+            MediaStore.Audio.Media.MIME_TYPE
         )
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
 
@@ -236,9 +233,9 @@ class MainActivity : AppCompatActivity() {
                 val id = cursor.getLong(idCol)
                 val mimeType = cursor.getString(mimeCol) ?: ""
                 
-                // ФИЛЬТРАЦИЯ: Пропускаем .ogg и другие ненужные форматы
+                // ФИЛЬТР ФОРМАТОВ: Исключаем OGG (и другие, если нужно)
                 if (mimeType == "audio/ogg" || mimeType == "application/ogg") {
-                    continue // Пропускаем этот трек
+                    continue
                 }
 
                 val uri = ContentUris.withAppendedId(
