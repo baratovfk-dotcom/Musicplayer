@@ -9,7 +9,6 @@ object PlaylistManager {
     private const val KEY_FAVORITES = "favorites"
     private const val KEY_PLAYLISTS = "playlists"
 
-    // --- ИЗБРАННОЕ ---
     fun getFavorites(context: Context): MutableSet<Long> {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val json = prefs.getString(KEY_FAVORITES, "[]") ?: "[]"
@@ -41,7 +40,6 @@ object PlaylistManager {
         prefs.edit().putString(KEY_FAVORITES, array.toString()).apply()
     }
 
-    // --- ПЛЕЙЛИСТЫ ---
     data class Playlist(val name: String, val songIds: MutableSet<Long>)
 
     fun getPlaylists(context: Context): List<Playlist> {
@@ -65,7 +63,7 @@ object PlaylistManager {
 
     fun createPlaylist(context: Context, name: String) {
         val playlists = getPlaylists(context).toMutableList()
-        if (playlists.any { it.name == name }) return // Уже есть
+        if (playlists.any { it.name == name }) return
         playlists.add(Playlist(name, mutableSetOf()))
         savePlaylists(context, playlists)
     }
@@ -86,7 +84,7 @@ object PlaylistManager {
             val obj = JSONObject()
             obj.put("name", pl.name)
             val idsArray = JSONArray()
-            pl.songIds.forEach { idsArray.put(it) }
+            pl.songIds.forEach { idsArray.add(it) }
             obj.put("ids", idsArray)
             array.put(obj)
         }
