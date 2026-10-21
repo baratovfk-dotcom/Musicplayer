@@ -26,29 +26,22 @@ class SongAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH =
         VH(ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
-    
     override fun onBindViewHolder(holder: VH, position: Int) {
-    val song = songs[position]
-    holder.b.tvTitle.text = song.title
-    holder.b.tvArtist.text = song.artist
-    holder.b.tvDuration.text = formatDuration(song.duration)
-    holder.b.root.isActivated = position == selectedIndex
-    holder.b.root.setOnClickListener { onClick(position) }
-    
-    // --- Сердечко (Избранное) ---
-    holder.b.btnFavorite.setImageResource(
-        if (song.isFavorite) android.R.drawable.btn_star_big_on 
-        else android.R.drawable.btn_star_big_off
-    )
-    holder.b.btnFavorite.setOnClickListener {
-        onFavoriteClick(position)
+        val song = songs[position]
+        holder.b.tvTitle.text = song.title
+        holder.b.tvArtist.text = song.artist
+        holder.b.tvDuration.text = formatDuration(song.duration)
+        holder.b.root.isActivated = position == selectedIndex
+        holder.b.root.setOnClickListener { onClick(position) }
+        
+        holder.b.btnFavorite.setImageResource(
+            if (song.isFavorite) android.R.drawable.btn_star_big_on 
+            else android.R.drawable.btn_star_big_off
+        )
+        holder.b.btnFavorite.setOnClickListener { onFavoriteClick(position) }
+        holder.b.btnMore.setOnClickListener { onMoreClick(position) }
     }
 
-    // --- Три точки (Плейлисты) ---
-    holder.b.btnMore.setOnClickListener {
-        onMoreClick(position)
-    }
-}
     override fun getItemCount() = songs.size
 
     private fun formatDuration(ms: Long): String {
