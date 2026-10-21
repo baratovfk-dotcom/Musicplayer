@@ -5,5 +5,6 @@ data class Song(
     val title: String,
     val artist: String,
     val duration: Long,
-    val uri: String
+    val uri: String,
+    var isFavorite: Boolean = false
 )
