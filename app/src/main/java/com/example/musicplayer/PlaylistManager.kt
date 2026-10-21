@@ -84,7 +84,7 @@ object PlaylistManager {
             val obj = JSONObject()
             obj.put("name", pl.name)
             val idsArray = JSONArray()
-            pl.songIds.forEach { idsArray.add(it) }
+            pl.songIds.forEach { idsArray.put(it) }
             obj.put("ids", idsArray)
             array.put(obj)
         }
