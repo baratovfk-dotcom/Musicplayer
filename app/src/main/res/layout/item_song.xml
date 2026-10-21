@@ -56,20 +56,21 @@
             android:layout_marginStart="8dp"
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorOnSurfaceVariant" />
-    </LinearLayout>
-    <ImageView
-    android:id="@+id/btnFavorite"
-    android:layout_width="36dp"
-    android:layout_height="36dp"
-    android:padding="6dp"
-    android:src="@android:drawable/btn_star_big_off"
-    app:tint="?attr/colorPrimary" />
 
-<ImageView
-    android:id="@+id/btnMore"
-    android:layout_width="36dp"
-    android:layout_height="36dp"
-    android:padding="6dp"
-    android:src="@android:drawable/ic_menu_more"
-    app:tint="?attr/colorOnSurfaceVariant" />
+        <ImageView
+            android:id="@+id/btnFavorite"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:src="@android:drawable/btn_star_big_off"
+            app:tint="?attr/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/btnMore"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:src="@android:drawable/ic_menu_more"
+            app:tint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
