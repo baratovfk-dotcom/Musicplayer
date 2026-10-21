@@ -7,7 +7,9 @@ import com.example.musicplayer.databinding.ItemSongBinding
 
 class SongAdapter(
     private var songs: List<Song>,
-    private val onClick: (Int) -> Unit
+    private val onClick: (Int) -> Unit,
+    private val onFavoriteClick: (Int) -> Unit,
+    private val onMoreClick: (Int) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.VH>() {
 
     private var selectedIndex = -1
@@ -24,15 +26,29 @@ class SongAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH =
         VH(ItemSongBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
+    
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val song = songs[position]
-        holder.b.tvTitle.text = song.title
-        holder.b.tvArtist.text = song.artist
-        holder.b.tvDuration.text = formatDuration(song.duration)
-        holder.b.root.isActivated = position == selectedIndex
-        holder.b.root.setOnClickListener { onClick(position) }
+    val song = songs[position]
+    holder.b.tvTitle.text = song.title
+    holder.b.tvArtist.text = song.artist
+    holder.b.tvDuration.text = formatDuration(song.duration)
+    holder.b.root.isActivated = position == selectedIndex
+    holder.b.root.setOnClickListener { onClick(position) }
+    
+    // --- Сердечко (Избранное) ---
+    holder.b.btnFavorite.setImageResource(
+        if (song.isFavorite) android.R.drawable.btn_star_big_on 
+        else android.R.drawable.btn_star_big_off
+    )
+    holder.b.btnFavorite.setOnClickListener {
+        onFavoriteClick(position)
     }
 
+    // --- Три точки (Плейлисты) ---
+    holder.b.btnMore.setOnClickListener {
+        onMoreClick(position)
+    }
+}
     override fun getItemCount() = songs.size
 
     private fun formatDuration(ms: Long): String {
